@@ -1,0 +1,161 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Charger l'image
+image = cv2.imread('puzzle.jpg')
+hist = np.zeros((100, 100, 3))
+# Convertir l'image en niveaux de gris
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+histogram = cv2.calcHist([image], [0], None, [256], [0, 256])
+
+# Tracer l'histogramme
+plt.plot(histogram, color='gray')
+plt.xlabel('Niveau de gris')
+plt.ylabel('Nombre de pixels')
+plt.title("Histogramme de l'image en niveaux de gris")
+plt.show()
+
+# Appliquer un seuillage pour binariser l'image
+ret, thresh = cv2.threshold(gray, 60, 100, cv2.THRESH_BINARY)
+
+# Trouver les contours dans l'image binarisée
+contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+# Créer une image vide pour dessiner les contours
+contour_img = np.zeros_like(image)
+
+# Dessiner les contours sur l'image vide
+cv2.drawContours(contour_img, contours, -1, (255,255,255), thickness=cv2.FILLED)
+
+# Convertir l'image en niveaux de gris pour donner des nuances de gris aux fruits
+contour_gray = cv2.cvtColor(contour_img, cv2.COLOR_BGR2GRAY)
+
+# Afficher l'image résultante
+plt.imshow(contour_gray, cmap='gray')
+plt.axis('off')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Charger l'image
+image = cv2.imread('puzzle.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Appliquer un filtrage de la médiane pour réduire le bruit
+image_median = cv2.medianBlur(image, 9)
+
+# Appliquer un filtrage de Sobel pour détecter les contours
+sobel_x = cv2.Sobel(image_median, cv2.CV_64F, 1, 0, ksize=1)
+sobel_y = cv2.Sobel(image_median, cv2.CV_64F, 0, 1, ksize=1)
+sobel_mag = np.sqrt(sobel_x**2 + sobel_y**2)
+sobel_mag = cv2.normalize(sobel_mag, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+
+# Appliquer une correction de contraste à l'image
+alpha = 1.5  # Facteur de contraste
+beta = 0     # Correction de luminosité (0 pour ne pas changer)
+image_contrast = cv2.convertScaleAbs(sobel_mag, alpha=alpha, beta=beta)
+
+# Appliquer une binarisation adaptative
+thresh = cv2.adaptiveThreshold(image_contrast, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 4)
+
+# Trouver les contours dans l'image binarisée
+contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+# Créer une image vide pour dessiner les contours
+contour_img = np.zeros_like(image, dtype=np.uint8)
+
+# Dessiner les contours sur l'image vide
+cv2.drawContours(contour_img, contours, -1, (255), thickness=cv2.FILLED)
+
+# Afficher l'image résultante
+plt.imshow(contour_img, cmap='gray')
+plt.axis('off')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Charger l'image
+image = cv2.imread('puzzle.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Appliquer un filtrage de la médiane pour réduire le bruit
+image_median = cv2.medianBlur(image, 5)
+
+# Appliquer un filtrage de Sobel pour détecter les contours
+sobel_x = cv2.Sobel(image_median, cv2.CV_64F, 1, 0, ksize=5)
+sobel_y = cv2.Sobel(image_median, cv2.CV_64F, 0, 1, ksize=5)
+sobel_mag = np.sqrt(sobel_x**2 + sobel_y**2)
+sobel_mag = cv2.normalize(sobel_mag, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+
+# Appliquer une correction de contraste à l'image
+alpha = 1.5  # Facteur de contraste
+beta = 0     # Correction de luminosité (0 pour ne pas changer)
+image_contrast = cv2.convertScaleAbs(sobel_mag, alpha=alpha, beta=beta)
+
+# Appliquer une binarisation adaptative
+thresh = cv2.adaptiveThreshold(image_contrast, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 4)
+
+# Trouver les contours dans l'image binarisée
+contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+# Créer une image vide pour dessiner les contours
+contour_img = np.zeros_like(image, dtype=np.uint8)
+
+# Dessiner les contours sur l'image vide
+cv2.drawContours(contour_img, contours, -1, (255), thickness=cv2.FILLED)
+
+
+# Appliquer la dilatation aux contours pour les agrandir légèrement
+kernel_dilation = np.ones((5, 5), np.uint8)
+contour_img_dilated = cv2.dilate(contour_img_eroded, kernel_dilation, iterations=1)
+
+# Appliquer l'érosion aux contours pour réduire leur taille
+kernel_erosion = np.ones((2, 2), np.uint8)
+contour_img_eroded = cv2.erode(contour_img, kernel_erosion, iterations=2)
+
+# Afficher l'image résultante
+plt.imshow(contour_img_dilated, cmap='gray')
+plt.axis('off')
+plt.show()
